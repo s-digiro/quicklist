@@ -313,7 +313,7 @@ pub fn update_lists() -> Result<(), Box<dyn Error>> {
                 if !tomorrows.exists()? {
                     tomorrows.create()?;
 
-                    fs::write(todays.path()?, template_contents)?;
+                    fs::write(tomorrows.path()?, template_contents)?;
                 }
             },
             ListType::Normal => (),

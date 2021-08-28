@@ -48,7 +48,7 @@ impl Op {
                 list.show()?;
                 Ok(())
             }
-            Op::Search(_, _) => Ok(()),
+            Op::Search(list, vals) => list.search(vals),
         }
     }
 }

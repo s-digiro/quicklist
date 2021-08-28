@@ -187,6 +187,24 @@ impl List {
         Ok(())
     }
 
+    pub fn search(&self, val: &str) -> Result<(), Box<dyn Error>> {
+        let file = File::open(self.path()?)?;
+
+        let lines = BufReader::new(file).lines();
+
+        let mut i = 1;
+        for line in lines {
+            let line = line?;
+            let val = val.to_lowercase();
+            if line.to_lowercase().contains(&val) {
+                println!("  {} {}", i, line);
+            }
+            i = i + 1;
+        }
+
+        Ok(())
+    }
+
     pub fn show(&self) -> Result<(), Box<dyn Error>> {
         let file = File::open(self.path()?)?;
 
@@ -237,7 +255,8 @@ impl List {
 }
 
 pub fn show_lists() -> Result<(), Box<dyn Error>> {
-    let lists = all_list_names()?;
+    let mut lists = all_list_names()?;
+    lists.sort();
     for list in lists {
         println!("  {}", list);
     }

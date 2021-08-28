@@ -59,5 +59,9 @@ pub const HELP_TEXT: &str = "usage: ql [--help, update, ls, <list name> [Repeats
         <YYYY-MM-DD>>
     ql <list> d <YYYY-MM-DD> s <term>:
         Shows the line containing <term> if it exists in instance of <list> for
-        the date <YYYY-MM-DD>>";
+        the date <YYYY-MM-DD>>
+
+usage: ql [--help, update, ls, <list name> [RepeatsDaily, ExistsDaily,
+       [t, d <YYY-MM-DD>, m] [e, a <lines...>, x <line numbers...>, s <term>,
+       delete]]";
 pub const INVALID_TEXT: &str = "Malformed Command";

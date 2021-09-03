@@ -11,3 +11,7 @@ dirs = "1.0"
 chrono = "0.4.19"
 subprocess = "0.2.6"
 simple-error = "0.2.3"
+
+[[bin]]
+name = "ql"
+path = "src/main.rs"

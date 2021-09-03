@@ -1,7 +1,9 @@
 [package]
 name = "quicklist"
+license = "MIT"
 version = "0.0.1"
 authors = ["Sean DiGirolamo <s.digirolamo218@gmail.com>"]
+description = "Command line based To Do list manager."
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

@@ -36,3 +36,8 @@ ql <list> e
 ## Configuration
 There aren't many configuration options right now, but the editor used in ql <list> e can be changed by setting 'EDITOR' constant in config.rs.
 By default it wil use neovim
+
+## To Do:
+* Complete different list types
+	* RepeatsDaily
+	* NewDaily

@@ -1,6 +1,3 @@
-extern crate simple_error;
-extern crate chrono;
-
 use std::path::PathBuf;
 use std::error::Error;
 use std::fs;
@@ -10,6 +7,8 @@ use std::io::prelude::*;
 use std::fs::OpenOptions;
 
 use chrono::{NaiveDate, Local, Duration};
+use left_pad::leftpad;
+use termion::color;
 
 use crate::config::*;
 
@@ -206,13 +205,34 @@ impl List {
     }
 
     pub fn show(&self) -> Result<(), Box<dyn Error>> {
+        let blue = "\033[0;31m";
+        let colorless = "\033[0m";
+
         let file = File::open(self.path()?)?;
 
-        let lines = BufReader::new(file).lines();
+        let mut lines = Vec::new();
+
+        lines.extend(
+            BufReader::new(file)
+                .lines()
+                .filter(|line| match line {
+                    Ok(_) => true,
+                    _ => false,
+                })
+                .map(|line| line.unwrap().to_string())
+        );
+
+        let digits = lines.len().to_string().len();
 
         let mut i = 1;
         for line in lines {
-            println!("  {} {}", i, line?);
+            println!(
+                " {}{}{}  {}",
+                color::Fg(color::Yellow),
+                leftpad(i.to_string(), digits),
+                color::Fg(color::Reset),
+                line
+            );
             i = i + 1;
         }
 

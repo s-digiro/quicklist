@@ -1,6 +1,8 @@
 #[macro_use]
 extern crate simple_error;
 extern crate subprocess;
+extern crate left_pad;
+extern crate termion;
 
 use std::error::Error;
 use std::env;

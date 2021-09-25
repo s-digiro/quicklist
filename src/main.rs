@@ -18,9 +18,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let op = parse::parse(args);
 
-    println!("\n");
     op.exec()?;
-    println!("\n");
 
     Ok(())
 }

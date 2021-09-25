@@ -110,17 +110,30 @@ impl List {
     }
 
     pub fn delete(&self) -> Result<(), Box<dyn Error>> {
-        let meta = self.meta()?;
-        let dir_entries = fs::read_dir(list_dir()?)?;
+        use std::io;
 
-        for dir_entry in dir_entries {
-            let path = dir_entry?.path();
-            if meta.files.contains(&path) {
-                fs::remove_file(path)?;
+        print!("Are you sure you want to delete quicklist '{}'? [(Y)es/(N)o]: ", self.name);
+        io::stdout().flush().unwrap();
+
+        let input: Option<char> = std::io::stdin()
+            .bytes()
+            .next()
+            .and_then(|result| result.ok())
+            .map(|byte| byte as char);
+
+        if format!("{}", input.unwrap()).to_lowercase() == "y" {
+            let meta = self.meta()?;
+            let dir_entries = fs::read_dir(list_dir()?)?;
+
+            for dir_entry in dir_entries {
+                let path = dir_entry?.path();
+                if meta.files.contains(&path) {
+                    fs::remove_file(path)?;
+                }
             }
-        }
 
-        fs::remove_file(self.meta_path()?)?;
+            fs::remove_file(self.meta_path()?)?;
+        }
 
         Ok(())
     }
@@ -189,14 +202,31 @@ impl List {
     pub fn search(&self, val: &str) -> Result<(), Box<dyn Error>> {
         let file = File::open(self.path()?)?;
 
-        let lines = BufReader::new(file).lines();
+        let mut lines = Vec::new();
+
+        lines.extend(
+            BufReader::new(file)
+                .lines()
+                .filter(|line| match line {
+                    Ok(_) => true,
+                    _ => false,
+                })
+                .map(|line| line.unwrap().to_string())
+        );
+
+        let digits = lines.len().to_string().len();
 
         let mut i = 1;
         for line in lines {
-            let line = line?;
             let val = val.to_lowercase();
             if line.to_lowercase().contains(&val) {
-                println!("  {} {}", i, line);
+                println!(
+                    " {}{}{}  {}",
+                    color::Fg(color::Yellow),
+                    leftpad(i.to_string(), digits),
+                    color::Fg(color::Reset),
+                    line
+                );
             }
             i = i + 1;
         }
@@ -205,9 +235,6 @@ impl List {
     }
 
     pub fn show(&self) -> Result<(), Box<dyn Error>> {
-        let blue = "\033[0;31m";
-        let colorless = "\033[0m";
-
         let file = File::open(self.path()?)?;
 
         let mut lines = Vec::new();
@@ -278,7 +305,11 @@ pub fn show_lists() -> Result<(), Box<dyn Error>> {
     let mut lists = all_list_names()?;
     lists.sort();
     for list in lists {
-        println!("  {}", list);
+        println!(
+            " {}{}",
+            color::Fg(color::Yellow),
+            list
+        );
     }
 
     Ok(())

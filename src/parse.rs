@@ -20,6 +20,7 @@ pub enum OpType {
     Remove,
     Help,
     Invalid,
+    NoSuchList,
     Search,
 }
 
@@ -28,6 +29,7 @@ enum State {
     Update,
     Help,
     Invalid,
+    NoSuchList,
     CreateNormal,
     CreateTyped,
     Show,
@@ -62,8 +64,8 @@ impl State {
             State::Update => State::Invalid,
             State::List => State::Invalid,
             State::Start => match input {
-                "--help" => State::Help,
-                "ls" => State::List,
+                "--help" | "-h" => State::Help,
+                "ls" | "list" => State::List,
                 "update" => State::Update,
                 _ => {
                     let list_name = input;
@@ -76,23 +78,28 @@ impl State {
                     if list::list_exists(list_dir, list_name) {
                         return State::Show
                     } else { // Does not exist
-                        return State::CreateNormal
+                        return State::NoSuchList
                     };
                 },
             },
             State::Help => State::Invalid,
             State::Invalid => State::Invalid,
+            State::NoSuchList => match input {
+                "create" => State::CreateNormal,
+                _ => State::NoSuchList,
+            },
             State::CreateNormal => State::CreateTyped,
             State::CreateTyped => State::Invalid,
             State::Show => match input {
-                "e" => State::Edit,
-                "a" => State::Add,
-                "x" => State::Remove,
-                "s" => State::Search,
-                "t" => State::ShowTomorrow,
-                "d" => State::Date,
-                "m" => State::ShowTemplate,
+                "e" | "edit" => State::Edit,
+                "a" | "add"  => State::Add,
+                "x" | "cut" => State::Remove,
+                "s" | "search" => State::Search,
+                "t" | "tomorrow" => State::ShowTomorrow,
+                "d" | "date" => State::Date,
+                "m" | "template" => State::ShowTemplate,
                 "delete" => State::Delete,
+                "create" => State::CreateNormal,
                 _ => State::Invalid,
             }
             State::Edit => State::Invalid,
@@ -101,17 +108,17 @@ impl State {
             State::Remove => State::GetNumber,
             State::Search => State::GetString,
             State::ShowTomorrow => match input {
-                "e" => State::Edit,
-                "a" => State::Add,
-                "x" => State::Remove,
-                "s" => State::Search,
+                "e" | "edit" => State::Edit,
+                "a" | "add" => State::Add,
+                "x" | "cut" => State::Remove,
+                "s" | "search" => State::Search,
                 _ => State::Invalid,
             },
             State::ShowTemplate => match input {
-                "e" => State::Edit,
-                "a" => State::Add,
-                "x" => State::Remove,
-                "s" => State::Search,
+                "e" | "edit" => State::Edit,
+                "a" | "add" => State::Add,
+                "x" | "cut" => State::Remove,
+                "s" | "search" => State::Search,
                 _ => State::Invalid,
             },
             State::Date => State::GetDate,
@@ -120,10 +127,10 @@ impl State {
                 _ => State::Invalid,
             }
             State::ShowDate => match input {
-                "e" => State::Edit,
-                "a" => State::Add,
-                "x" => State::Remove,
-                "s" => State::Search,
+                "e" | "edit" => State::Edit,
+                "a" | "add" => State::Add,
+                "x" | "cut" => State::Remove,
+                "s" | "search" => State::Search,
                 _ => State::Invalid,
             },
         }
@@ -151,9 +158,12 @@ pub fn parse(args: Vec<String>) -> Op {
             State::Help => op = OpType::Help,
             State::Update => op = OpType::Update,
             State::Invalid => op = OpType::Invalid,
+            State::NoSuchList => {
+                op = OpType::NoSuchList;
+                list = Some(arg.to_string());
+            },
             State::CreateNormal => {
                 op = OpType::Create;
-                list = Some(arg.to_string());
                 typ = Some(ListType::Normal);
                 instance = Some(ListInstance::Main);
             },
@@ -203,6 +213,7 @@ pub fn parse(args: Vec<String>) -> Op {
         OpType::List => Op::List,
         OpType::Help => Op::Help,
         OpType::Invalid => Op::Invalid,
+        OpType::NoSuchList => Op::NoSuchList(list.unwrap()),
         op => {
             let list = List {
                 name: list.unwrap(),

@@ -11,6 +11,7 @@ pub enum Op {
     List,
     Help,
     Invalid,
+    NoSuchList(String),
     Create(List),
     Show(List),
     Edit(List),
@@ -32,6 +33,11 @@ impl Op {
             Op::Invalid => {
                 println!("{}", INVALID_TEXT);
                 println!("{}", HELP_TEXT);
+                Ok(())
+            },
+            Op::NoSuchList(s) => {
+                println!("list '{}' not found.", s);
+                println!("'ql --help' for usage.");
                 Ok(())
             },
             Op::Create(list) => list.create(),

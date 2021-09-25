@@ -133,6 +133,9 @@ impl List {
             }
 
             fs::remove_file(self.meta_path()?)?;
+            println!("Deleted quicklist '{}'", self.name);
+        } else {
+            println!("Aborting!");
         }
 
         Ok(())
@@ -154,7 +157,6 @@ impl List {
 
             File::create(self.path()?)?;
         } else {
-            println!("creating");
             let mut meta = File::create(self.meta_path()?)?;
             meta.write_all(&format!("{}\n", self.typ.to_string()).as_bytes())?;
             meta.write_all(
@@ -165,6 +167,7 @@ impl List {
             )?;
 
             File::create(self.path()?)?;
+            println!("Created new quicklist '{}'", self.name);
         };
 
 

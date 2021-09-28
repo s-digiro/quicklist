@@ -224,7 +224,7 @@ impl List {
             let val = val.to_lowercase();
             if line.to_lowercase().contains(&val) {
                 println!(
-                    " {}{}{}  {}",
+                    " {}{}{} {}",
                     color::Fg(color::Yellow),
                     leftpad(i.to_string(), digits),
                     color::Fg(color::Reset),
@@ -257,7 +257,7 @@ impl List {
         let mut i = 1;
         for line in lines {
             println!(
-                " {}{}{}  {}",
+                " {}{}{} {}",
                 color::Fg(color::Yellow),
                 leftpad(i.to_string(), digits),
                 color::Fg(color::Reset),

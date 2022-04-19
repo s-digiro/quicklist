@@ -14,6 +14,7 @@ pub struct MetaData {
 }
 
 impl MetaData {
+    // Gets meta data for list with name 'name'
     pub fn within(name: &str) -> Result<MetaData, Box<dyn Error>> {
         let mut typ = None;
         let mut files = Vec::new();
@@ -39,6 +40,7 @@ impl MetaData {
         }
     }
 
+    // Gets meta data for list object
     pub fn of(list: &List) -> Result<MetaData, Box<dyn Error>> {
         MetaData::within(&list.name)
     }

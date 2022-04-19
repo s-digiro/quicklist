@@ -99,10 +99,16 @@ impl List {
             ListType::Normal => String::new(),
         };
 
-        let mut dir = list_dir()?;
-        let path = format!("{}{}.txt", self.name, suffix);
-        dir.push(path);
-        Ok(dir)
+        let path = if let ListType::Normal = meta.typ {
+            meta.files.get(0).expect(&format!("MetaData for Normal list {:?} is missing a path", self)).clone()
+        } else {
+            let mut dir = list_dir()?;
+            let path = format!("{}{}.txt", self.name, suffix);
+            dir.push(path);
+            dir
+        };
+
+        Ok(path)
     }
 
     pub fn meta(&self) -> Result<MetaData, Box<dyn Error>> {
@@ -184,7 +190,11 @@ impl List {
 
     pub fn edit(&self) -> Result<(), Box<dyn Error>> {
         let list_path = self.path()?;
-        subprocess::Exec::cmd(EDITOR).arg(list_path).join()?;
+        if list_path.extension().unwrap() == "sc" {
+            subprocess::Exec::cmd("sc-im").arg(list_path).join()?;
+        } else {
+            subprocess::Exec::cmd(EDITOR).arg(list_path).join()?;
+        }
 
         Ok(())
     }
@@ -320,6 +330,14 @@ pub fn show_lists() -> Result<(), Box<dyn Error>> {
 
 pub fn list_exists(mut list_dir: PathBuf, list_name: &str) -> bool {
     list_dir.push(format!("{}.txt", list_name));
+
+    if list_dir.exists() {
+        return true
+    }
+
+    list_dir.pop();
+    list_dir.push(format!("{}.sc", list_name));
+
     list_dir.exists()
 }
 

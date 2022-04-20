@@ -1,7 +1,7 @@
 [package]
 name = "quicklist"
 license = "MIT"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["Sean DiGirolamo <s.digirolamo218@gmail.com>"]
 description = "Command line based To Do list manager."
 edition = "2018"
@@ -15,6 +15,7 @@ subprocess = "0.2.6"
 simple-error = "0.2.3"
 left-pad = "1.0.1"
 termion = "1.5.6"
+clap = { version = "3.1.10", features = ["derive"] }
 
 [[bin]]
 name = "ql"

@@ -156,8 +156,11 @@ impl List {
                 .open(self.meta_path()?)?;
             meta.write_all(
                 &format!(
-                    "\n{}",
-                    self.path()?.into_os_string().into_string().unwrap()
+                    "{}",
+                    new_normal_path(&self.name)?
+                        .into_os_string()
+                        .into_string()
+                        .unwrap(),
                 ).as_bytes()
             )?;
 
@@ -168,7 +171,10 @@ impl List {
             meta.write_all(
                 &format!(
                     "{}",
-                    self.path()?.into_os_string().into_string().unwrap()
+                    new_normal_path(&self.name)?
+                        .into_os_string()
+                        .into_string()
+                        .unwrap(),
                 ).as_bytes()
             )?;
 
@@ -417,5 +423,11 @@ pub fn update_lists() -> Result<(), Box<dyn Error>> {
 pub fn meta_path(name: &str) -> Result<PathBuf, Box<dyn Error>> {
     let mut dir = list_dir()?;
     dir.push(format!("{}.meta", name));
+    Ok(dir)
+}
+
+pub fn new_normal_path(name: &str) -> Result<PathBuf, Box<dyn Error>> {
+    let mut dir = list_dir()?;
+    dir.push(format!("{}.txt", name));
     Ok(dir)
 }
